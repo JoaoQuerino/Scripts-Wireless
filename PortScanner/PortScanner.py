@@ -1,4 +1,4 @@
-import nmap 
+import nmap3
 import psutil
 import socket
 import time
@@ -78,7 +78,7 @@ Range de portas do 0 a 5000
 def fazer_scan(alvo, portasSelecionadas):
     inicio_Scan = time.time()
     print("Analise iniciada, aguarde o processamento")
-    analise = nmap.PortScanner()
+    analise = nmap3.PortScanner()
 
     # Parâmetros para detecção de SO, usando escaneamento do tipo SYN exi
     result = analise.scan(alvo, portasSelecionadas, '-A -sS --osscan-guess --min-rate=50000 -T3')
