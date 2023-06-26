@@ -1,13 +1,23 @@
-#TODO: Adicionar docstring
-
 from abc import ABC
 from scapy.all import IP, TCP, UDP, ICMP, RandMAC, Ether, RandIP, get_if_hwaddr
+from termcolor import cprint
+import ipaddress
 
 
 class AbstractPacket(ABC):
-    #TODO: Adicionar docstring
-    
+    """
+    Abstract base class for packet building.
+
+    Provides common methods for building packets.
+    """
+
     def packet_builder(self):
+        """
+        Builds the packet based on user inputs and returns it.
+
+        :return: The built packet.
+        """
+
         host_ip = self.host_ip_input()
         host_port = self.host_port_input(host_ip)
         chosen_layer = self.get_layer(host_port)
@@ -26,58 +36,123 @@ class AbstractPacket(ABC):
 
         return packet
 
-    def host_ip_input(self): #TODO: Listar ip dos aparelhos na rede para seleção - Usar PortScanner
-        #TODO: Adicionar docstring
-                
-        host_ip = input('Enter the IP address of the destination host: ')
-                
+    def host_ip_input(self): #TODO: Listar ip dos aparelhos na rede para selecionar - Usar PortScanner
+        """
+        Prompts the user to enter the IP address of the destination host.
+
+        :return: The entered host IP address.
+        """
+
+        valid = False
+        while valid == False:
+            try:
+                host_ip = input('Enter the IP address of the destination host: ')
+                if ipaddress.IPv4Address(host_ip):
+                    valid = True
+            except Exception as e:
+                cprint(str(e), 'red')
+
         return host_ip
     
-    def host_port_input(self, host_ip): #TODO: Listar portas abertas para seleção - Usar PortScanner
-        #TODO: Adicionar docstring
+    def host_port_input(self, host_ip): #TODO: Listar portas abertas para selecionar - Usar PortScanner
+        """
+        Prompts the user to enter the destination port.
 
-        host_port = int(input('Enter the destination port: '))
+        :param host_ip: The IP address of the destination host.
+        :return: The entered destination port.
+        """
+
+        valid = False
+        while valid == False:
+            try:
+                host_port = int(input('Enter the destination port: '))
+                valid = True
+            except Exception as e:
+                cprint(str(e), 'red')
+
         return host_port
 
     def payload_input(self):
-        #TODO: Adicionar docstring
+        """
+        Prompts the user to enter a payload for the packet.
+
+        :return: The entered payload.
+        """
 
         payload = input('Enter a payload to be in the package: ')
+
         return payload
 
     def get_layer(self, host_port):
-        #TODO: Adicionar docstring
+        """
+        Retrieves the appropriate layer for the packet based on the host port.
+
+        :param host_port: The destination port.
+        :return: The layer object for the packet.
+        """
 
         raise NotImplementedError
 
 
 class TCPPacket(AbstractPacket):
-    #TODO: Adicionar docstring
+    """
+    Class representing a TCP packet.
 
-    def get_layer(self, host_port): #TODO: verificar possiveis excessões
-        #TODO: Adicionar docstring
+    Inherits from AbstractPacket.
+    """
+    
+    def get_layer(self, host_port): #TODO: verificar possiveis excessï¿½es
+        """
+        Retrieves the TCP layer for the packet based on the host port.
+
+        :param host_port: The destination port.
+        :return: The TCP layer object for the packet.
+        """
 
         return TCP(dport=host_port)
 
 
 class UDPPacket(AbstractPacket):
-    #TODO: Adicionar docstring
+    """
+    Class representing a UDP packet.
 
-    def get_layer(self, host_port): #TODO: verificar possiveis excessões
-        #TODO: Adicionar docstring
+    Inherits from AbstractPacket.
+    """
+
+    def get_layer(self, host_port): #TODO: verificar possiveis excessï¿½es
+        """
+        Retrieves the UDP layer for the packet based on the host port.
+
+        :param host_port: The destination port.
+        :return: The UDP layer object for the packet.
+        """
 
         return UDP(dport=host_port)
 
 
 class ICMPPacket(AbstractPacket):
-    #TODO: Adicionar docstring
+    """
+    Class representing an ICMP packet.
+
+    Inherits from AbstractPacket.
+    """
 
     def host_port_input(self, host_ip):
-        #TODO: Adicionar docstring
+        """
+        Overrides the host_port_input method to return an empty string.
+
+        :param host_ip: The IP address of the destination host.
+        :return: An empty string.
+        """
 
         return ''
 
-    def get_layer(self, host_port): #TODO: verificar possiveis excessões
-        #TODO: Adicionar docstring
+    def get_layer(self, host_port): #TODO: verificar possiveis excessï¿½es
+        """
+        Retrieves the ICMP layer for the packet.
+
+        :param host_port: The destination port.
+        :return: The ICMP layer object for the packet.
+        """
 
         return ICMP()

@@ -1,12 +1,16 @@
-#TODO: Adicionar docstring
-
 from enum import Enum
 from packet_types import TCPPacket, UDPPacket, ICMPPacket
 from send_modes import exponential_send, single_send, overload_send
-
+from termcolor import cprint
 
 class Protocol(Enum):
-    #TODO: Adicionar docstring
+    """
+    Enumeration of supported protocols.
+
+    TCP: TCP protocol.
+    UDP: UDP protocol.
+    ICMP: ICMP protocol.
+    """
 
     TCP = 0
     UDP = 1
@@ -14,7 +18,13 @@ class Protocol(Enum):
 
 
 class SendMode(Enum):
-    #TODO: Adicionar docstring
+    """
+    Enumeration of supported send modes.
+
+    EXPONENTIAL: Exponential growth send mode.
+    SINGLE: Single batch send mode.
+    OVERLOAD: Traffic overload send mode.
+    """
 
     EXPONENTIAL = 0
     SINGLE = 1
@@ -32,13 +42,16 @@ def choose_protocol():
     protocol = input(f'Select a supported packet type ({supported_protocols_str}): ').upper()
 
     while protocol not in supported_protocols:
-        print(f'{protocol} is not a supported protocol.')
+        cprint(f'{protocol} is not a supported protocol.', 'red')
         protocol = input(f'Select a supported packet type ({supported_protocols_str}): ').upper()
 
     return Protocol(supported_protocols.index(protocol))
 
 def build_packet():
-    #TODO: Adicionar docstring
+    """
+    Builds a packet based on the selected protocol.
+    Returns the built packet.
+    """
 
     protocol = choose_protocol()
 
@@ -64,13 +77,17 @@ def choose_send_mode():
     send_mode = input(f'Select a supported send mode ({supported_send_modes_str}): ').upper()
 
     while send_mode not in supported_send_modes:
-        print(f'{send_mode} is not a supported send mode.')
+        cprint(f'{send_mode} is not a supported send mode.', 'red')
         send_mode = input(f'Select a supported send mode ({supported_send_modes_str}): ').upper()
 
     return SendMode(supported_send_modes.index(send_mode))
 
 def send(packet):
-    #TODO: Adicionar docstring
+    """
+    Sends a packet based on the selected send mode.
+
+    :param packet: The packet to be sent.
+    """
 
     send_mode = choose_send_mode()
 
@@ -87,9 +104,12 @@ def send(packet):
         raise NotImplementedError
 
 if __name__ == '__main__':
-    packet = build_packet()
+    try:
+        packet = build_packet()
 
-    print(packet.show())
-    print(packet.summary())
+        print(packet.show())
+        print(packet.summary())
 
-    send(packet)
+        send(packet)
+    except KeyboardInterrupt:
+        cprint('\nManual interruption', 'red')
