@@ -15,10 +15,10 @@ def pos_int_input(message):
             int_input = int(input(message))
 
             while int_input < 1:
-                print('O entrada deve ser um número inteiro positivo.')
+                print('O entrada deve ser um numero inteiro positivo.')
                 int_input = int(input(message))
         except ValueError:
-            print('O entrada deve ser um número inteiro.')
+            print('O entrada deve ser um numero inteiro.')
 
     return int_input
 
@@ -32,33 +32,55 @@ def pos_float_input(message):
             float_input = float(input(message))
 
             while float_input <= 0:
-                print('O entrada deve ser um número real positivo.')
+                print('O entrada deve ser um numero real positivo.')
                 float_input = float(input(message))
         except ValueError:
-            print('O entrada deve ser um número real.')
+            print('O entrada deve ser um numero real.')
 
     return float_input
 
 def exponential_send(packet):
     #TODO: Adicionar docstring
 
-    st_packet_count = pos_int_input('Número inicial de pacotes por envio: ')
-    ratio = pos_float_input('Razão de incremento no número de pacotes: ')
+    packet_count = pos_int_input('numero inicial de pacotes por envio: ')
+    ratio = pos_float_input('Razao de incremento no numero de pacotes: ')
     delay = pos_float_input('Atraso entre os envios (em segundos): ')
-
-    packet_count = st_packet_count
-    while packet_count >= 1:
-        single_send(packet, floor(packet_count))
-        sleep(delay)
-        packet_count *= ratio
-
+    
+    try:
+        while packet_count >= 1:
+            sendp(packet, inter=0, count=floor(packet_count))
+            sleep(delay)
+            packet_count *= ratio
+    except KeyboardInterrupt:
+        print(' InterrupÃ§ao manual')
+            
 def single_send(packet):
     #TODO: Adicionar docstring
 
-    number_of_packets = pos_int_input('Número de pacotes: ')
-    sendp(packet, inter=0, count=number_of_packets)
+    number_of_packets = pos_int_input('Numero de pacotes: ')
+    try:
+        sendp(packet, inter=0, count=number_of_packets)
+    except KeyboardInterrupt:
+        print(' InterrupÃ§ao manual')
 
 def overload_send(packet):
     #TODO: Adicionar docstring
-
+    
     sendp(packet, inter=0, loop=1)
+
+# def linear_send(packet):
+#     #TODO: Adicionar docstring
+
+#     packet_count = pos_int_input('numero inicial de pacotes por envio: ')
+#     while:
+        
+#     increment = int('Incremento no numero de pacotes por envio: ')
+#     delay = pos_float_input('Atraso entre os envios (em segundos): ')
+    
+#     try:
+#         while packet_count >= 1:
+#             sendp(packet, inter=0, count=floor(packet_count))
+#             sleep(delay)
+#             packet_count *= ratio
+#     except KeyboardInterrupt:
+#         print(' InterrupÃ§ao manual')

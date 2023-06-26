@@ -77,13 +77,14 @@ def send(packet):
     if send_mode == SendMode.EXPONENTIAL:
         exponential_send(packet)
 
-    if send_mode == SendMode.SINGLE:
+    elif send_mode == SendMode.SINGLE:
         single_send(packet)
 
-    if send_mode == SendMode.OVERLOAD:
+    elif send_mode == SendMode.OVERLOAD:
         overload_send(packet)
 
-    raise NotImplementedError
+    else:
+        raise NotImplementedError
 
 if __name__ == '__main__':
     packet = build_packet()
