@@ -25,7 +25,6 @@ def pos_int_input(message):
 
     return int_input
 
-
 def pos_float_input(message):
     """
     Function to prompt the user for a positive floating-point input.
@@ -47,7 +46,6 @@ def pos_float_input(message):
 
     return float_input
 
-
 def exponential_send(packet):
     """
     Function to send packets with exponential growth.
@@ -66,7 +64,6 @@ def exponential_send(packet):
     except KeyboardInterrupt:
         cprint('Manual interruption', 'red')
 
-            
 def single_send(packet):
     """
     Function to send a single batch of packets.
@@ -79,7 +76,6 @@ def single_send(packet):
     except KeyboardInterrupt:
         cprint('Manual interruption', 'red')
 
-
 def overload_send(packet):
     """
     Function to send packets in a traffic overload.
@@ -87,7 +83,6 @@ def overload_send(packet):
     :param packet: The packet to be sent.
     """
     sendp(packet, inter=0, loop=1)
-
 
 def arithmetic_send(packet):
     """

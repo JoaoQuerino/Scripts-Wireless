@@ -3,6 +3,7 @@ from packet_types import TCPPacket, UDPPacket, ICMPPacket
 from send_modes import exponential_send, single_send, overload_send
 from termcolor import cprint
 
+
 class Protocol(Enum):
     """
     Enumeration of supported protocols.
@@ -46,7 +47,7 @@ def choose_protocol():
         protocol = input(f'Select a supported packet type ({supported_protocols_str}): ').upper()
 
     return Protocol(supported_protocols.index(protocol))
-
+    
 def build_packet():
     """
     Builds a packet based on the selected protocol.

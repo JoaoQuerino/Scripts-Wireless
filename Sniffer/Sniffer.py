@@ -5,7 +5,8 @@ import sys
 from termcolor import colored
 import os
 
-def cadaPktGeral(packet):
+
+def cadaPktGeral(packet): 
     print(colored("*******RESUMO DO PACOTE*******", 'white', attrs=['bold']))
     print(packet.summary())
     print()
@@ -24,10 +25,7 @@ def cadaPkt(packet):
     # Se o nome do arquivo de captura e o caminho estiverem definidos, salve o pacote no arquivo
 
 
-           
-
 if __name__ == "__main__":
-
 
     placaDeRede = 'wlxf4ec38924d47' 
     alvo = input("Informe um endereço IPV4 local para estar sendo analisado, ou deixe em branco para analisar a rede toda: ")
