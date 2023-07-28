@@ -4,10 +4,10 @@ from rich import print as r_print
 
 class FontTypes(Enum):
 
-    NORMAL = '#FFFFFF'
-    BOLD = 'bold #FFFFFF'
-    ERROR = 'bold #FF0000'
-    ALERT = 'bold #FFFF00'
+    NORMAL = ['#FFFFFF']
+    BOLD = ['bold', '#FFFFFF']
+    ERROR = ['bold', '#F00000']
+    ALERT = ['bold', '#FFFF00']
     TESTE = ['bold', '#FF00FF']
 
 

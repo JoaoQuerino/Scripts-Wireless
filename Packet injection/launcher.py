@@ -2,6 +2,8 @@ from enum import Enum
 from packet_types import TCPPacket, UDPPacket, ICMPPacket
 from send_modes import exponential_send, single_send, overload_send
 from termcolor import cprint
+from Views.Printer import FontTypes, formater_text
+from typing import Union
 
 
 class Protocol(Enum):
@@ -32,7 +34,7 @@ class SendMode(Enum):
     OVERLOAD = 2
 
 
-def choose_protocol():
+def choose_protocol() -> Protocol:
     """
     Prompts for input of a supported protocol until one is entered.
     Returns the supported protocol entered as a Protocol Enum.
@@ -43,12 +45,12 @@ def choose_protocol():
     protocol = input(f'Select a supported packet type ({supported_protocols_str}): ').upper()
 
     while protocol not in supported_protocols:
-        cprint(f'{protocol} is not a supported protocol.', 'red')
+        print(formater_text('{} is not a supported protocol.'.format(Protocol), ))
         protocol = input(f'Select a supported packet type ({supported_protocols_str}): ').upper()
 
     return Protocol(supported_protocols.index(protocol))
     
-def build_packet():
+def build_packet() -> Union[TCPPacket, UDPPacket, ICMPPacket]:
     """
     Builds a packet based on the selected protocol.
     Returns the built packet.
@@ -67,7 +69,7 @@ def build_packet():
 
     raise NotImplementedError
 
-def choose_send_mode():
+def choose_send_mode() -> SendMode:
     """
     Prompts for input of a supported send mode until one is entered.
     Returns the supported send mode entered as a SendMode Enum.
@@ -78,7 +80,7 @@ def choose_send_mode():
     send_mode = input(f'Select a supported send mode ({supported_send_modes_str}): ').upper()
 
     while send_mode not in supported_send_modes:
-        cprint(f'{send_mode} is not a supported send mode.', 'red')
+        print(formater_text('{} is not a supported send mode.'.format(send_mode), FontTypes.ERROR, [0, 1, 2, 3, 4, 5, 6])) 
         send_mode = input(f'Select a supported send mode ({supported_send_modes_str}): ').upper()
 
     return SendMode(supported_send_modes.index(send_mode))
@@ -113,4 +115,4 @@ if __name__ == '__main__':
 
         send(packet)
     except KeyboardInterrupt:
-        cprint('\nManual interruption', 'red')
+        print(formater_text('\nManual interruption', FontTypes.ERROR, [0,1]))

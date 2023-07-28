@@ -1,7 +1,9 @@
 from abc import ABC
-from scapy.all import IP, TCP, UDP, ICMP, RandMAC, Ether, RandIP, get_if_hwaddr
+from scapy.all import IP, TCP, UDP, ICMP, RandMAC, Ether, RandIP, get_if_hwaddr, Packet
 from termcolor import cprint
 import ipaddress
+from Views.Printer import FontTypes, formater_text
+
 
 
 class AbstractPacket(ABC):
@@ -11,7 +13,7 @@ class AbstractPacket(ABC):
     Provides common methods for building packets.
     """
 
-    def packet_builder(self):
+    def packet_builder(self) -> Packet:
         """
         Builds the packet based on user inputs and returns it.
 
@@ -36,7 +38,7 @@ class AbstractPacket(ABC):
 
         return packet
 
-    def host_ip_input(self): #TODO: Listar ip dos aparelhos na rede para selecionar - Usar PortScanner
+    def host_ip_input(self) -> str: #TODO: Listar ip dos aparelhos na rede para selecionar - Usar PortScanner
         """
         Prompts the user to enter the IP address of the destination host.
 
@@ -50,11 +52,10 @@ class AbstractPacket(ABC):
                 if ipaddress.IPv4Address(host_ip):
                     valid = True
             except Exception as e:
-                cprint(str(e), 'red')
-
+                print(formater_text(str(e), FontTypes.ERROR, [0]))
         return host_ip
     
-    def host_port_input(self, host_ip): #TODO: Listar portas abertas para selecionar - Usar PortScanner
+    def host_port_input(self, host_ip) -> str: #TODO: Listar portas abertas para selecionar - Usar PortScanner
         """
         Prompts the user to enter the destination port.
 
@@ -68,11 +69,11 @@ class AbstractPacket(ABC):
                 host_port = int(input('Enter the destination port: '))
                 valid = True
             except Exception as e:
-                cprint(str(e), 'red')
+                print(formater_text(str(e), FontTypes.ERROR, [0]))
 
         return host_port
 
-    def payload_input(self):
+    def payload_input(self) -> str:
         """
         Prompts the user to enter a payload for the packet.
 
@@ -101,7 +102,7 @@ class TCPPacket(AbstractPacket):
     Inherits from AbstractPacket.
     """
     
-    def get_layer(self, host_port): #TODO: verificar possiveis excess�es
+    def get_layer(self, host_port) -> TCP: #TODO: verificar possiveis excess�es
         """
         Retrieves the TCP layer for the packet based on the host port.
 
@@ -119,7 +120,7 @@ class UDPPacket(AbstractPacket):
     Inherits from AbstractPacket.
     """
 
-    def get_layer(self, host_port): #TODO: verificar possiveis excess�es
+    def get_layer(self, host_port) -> UDP: #TODO: verificar possiveis excess�es
         """
         Retrieves the UDP layer for the packet based on the host port.
 
@@ -137,7 +138,7 @@ class ICMPPacket(AbstractPacket):
     Inherits from AbstractPacket.
     """
 
-    def host_port_input(self, host_ip):
+    def host_port_input(self, host_ip) -> str:
         """
         Overrides the host_port_input method to return an empty string.
 
@@ -147,7 +148,7 @@ class ICMPPacket(AbstractPacket):
 
         return ''
 
-    def get_layer(self, host_port): #TODO: verificar possiveis excess�es
+    def get_layer(self, host_port) -> ICMP: #TODO: verificar possiveis excess�es
         """
         Retrieves the ICMP layer for the packet.
 
