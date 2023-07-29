@@ -1,9 +1,7 @@
 from abc import ABC
-from scapy.all import IP, TCP, UDP, ICMP, RandMAC, Ether, RandIP, get_if_hwaddr, Packet
-from termcolor import cprint
+from scapy.all import IP, TCP, UDP, ICMP, RandMAC, Ether, RandIP, get_if_hwaddr, Packet, get_if_list
 import ipaddress
-from Views.Printer import FontTypes, formater_text
-
+from Views.Printer import FontTypes, formater_text, f_print, f_input
 
 
 class AbstractPacket(ABC):
@@ -24,11 +22,28 @@ class AbstractPacket(ABC):
         host_port = self.host_port_input(host_ip)
         chosen_layer = self.get_layer(host_port)
         payload = self.payload_input()
-                
-        use_rand_mac_and_ip = input("Want to use random MAC and IP address? (Y for yes): ").upper() == 'Y'
+                             
+        use_rand_mac_and_ip = f_input(f'{formater_text("Want to use random MAC and IP address?", FontTypes.NORMAL)} '\
+            f'({formater_text("Y for yes", FontTypes.BOLD)}): ').upper() == 'Y'
         
         if not use_rand_mac_and_ip:
-            ether_layer = Ether(src=get_if_hwaddr('wlxf4ec38924d47'))
+            available_interfaces = get_if_list()
+            available_interfaces_str = ', '.join(
+                [formater_text(i, FontTypes.BOLD) for i in available_interfaces]
+                )
+            interface = f_input(f'{formater_text("Select a available interface", FontTypes.NORMAL)} ({available_interfaces_str}): ')
+
+            while interface not in available_interfaces:
+                if interface != '':
+                    f_print(formater_text(f'{interface} is not an available interface.', FontTypes.ERROR))
+
+                interface = f_input(f'{formater_text("Select a available interface", FontTypes.NORMAL)} ({available_interfaces_str}): ')
+
+            try:
+                ether_layer = Ether(src=get_if_hwaddr(interface))
+            except Exception as e:
+                f_print(formater_text(str(e), FontTypes.ERROR))
+
             ip_layer = IP(dst=host_ip)
         else:        
             ether_layer = Ether(src=RandMAC())
@@ -48,11 +63,13 @@ class AbstractPacket(ABC):
         valid = False
         while valid == False:
             try:
-                host_ip = input('Enter the IP address of the destination host: ')
+                host_ip = f_input(formater_text('Enter the IP address of the destination host: ', FontTypes.NORMAL))
                 if ipaddress.IPv4Address(host_ip):
                     valid = True
+            except ipaddress.AddressValueError:
+                f_print(formater_text('Invalid ipv4 address value', FontTypes.ERROR))
             except Exception as e:
-                print(formater_text(str(e), FontTypes.ERROR, [0]))
+                f_print(formater_text(str(e), FontTypes.ERROR))
         return host_ip
     
     def host_port_input(self, host_ip) -> str: #TODO: Listar portas abertas para selecionar - Usar PortScanner
@@ -66,10 +83,12 @@ class AbstractPacket(ABC):
         valid = False
         while valid == False:
             try:
-                host_port = int(input('Enter the destination port: '))
+                host_port = int(f_input(formater_text('Enter the destination port: ', FontTypes.NORMAL)))
                 valid = True
+            except ValueError:
+                f_print(formater_text('The port has to be an integer', FontTypes.ERROR))
             except Exception as e:
-                print(formater_text(str(e), FontTypes.ERROR, [0]))
+                f_print(formater_text(str(e), FontTypes.ERROR))
 
         return host_port
 
@@ -80,7 +99,7 @@ class AbstractPacket(ABC):
         :return: The entered payload.
         """
 
-        payload = input('Enter a payload to be in the package: ')
+        payload = f_input(formater_text('Enter a payload to be in the package: ', FontTypes.NORMAL))
 
         return payload
 

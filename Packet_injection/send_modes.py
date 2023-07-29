@@ -1,8 +1,7 @@
 from time import sleep
 from scapy.all import sendp
 from math import floor
-from termcolor import cprint
-from Views.Printer import FontTypes, formater_text
+from Views.Printer import FontTypes, formater_text, f_print, f_input
 
 
 def pos_int_input(message) -> int:
@@ -16,13 +15,13 @@ def pos_int_input(message) -> int:
 
     while int_input < 1:
         try:
-            int_input = int(input(message))
+            int_input = int(f_input(formater_text(message, FontTypes.NORMAL)))
 
             while int_input < 1:
-                print(formater_text('The input must be a positive integer.', FontTypes.ERROR, [0, 1, 2, 3, 4, 5, 6]))
-                int_input = int(input(message))
+                f_print(formater_text('The input must be a positive integer.', FontTypes.ERROR))
+                int_input = int(f_input(formater_text(message, FontTypes.NORMAL)))
         except ValueError:
-            print(formater_text('The input must be an integer.', FontTypes.ERROR, [0, 1, 2, 3, 4, 5]))
+            f_print(formater_text('The input must be an integer.', FontTypes.ERROR))
 
     return int_input
 
@@ -37,13 +36,13 @@ def pos_float_input(message) -> float:
 
     while float_input <= 0:
         try:
-            float_input = float(input(message))
+            float_input = float(f_input(formater_text(message, FontTypes.NORMAL)))
 
             while float_input <= 0:
-                print(formater_text('The input must be a positive real number.', FontTypes.ERROR, [0, 1, 2, 3, 4, 5, 6, 7]))
-                float_input = float(input(message))
+                f_print(formater_text('The input must be a positive real number.', FontTypes.ERROR))
+                float_input = float(f_input(formater_text(message, FontTypes.NORMAL)))
         except ValueError:
-            print(formater_text('The input must be a real number.', FontTypes.ERROR, [0, 1, 2, 3, 4, 5, 6]))
+            f_print(formater_text('The input must be a real number.', FontTypes.ERROR))
 
     return float_input
 
@@ -63,7 +62,7 @@ def exponential_send(packet):
             sleep(delay)
             packet_count *= ratio
     except KeyboardInterrupt:
-        print(formater_text('Manual interruption', FontTypes.ERROR, [0, 1]))
+        f_print(formater_text('Manual interruption', FontTypes.ERROR))
 
 def single_send(packet):
     """
@@ -75,7 +74,7 @@ def single_send(packet):
     try:
         sendp(packet, inter=0, count=number_of_packets)
     except KeyboardInterrupt:
-        print(formater_text('Manual interruption', FontTypes.ERROR, [0, 1]))
+        f_print(formater_text('Manual interruption', FontTypes.ERROR))
 
 def overload_send(packet):
     """
@@ -101,4 +100,4 @@ def arithmetic_send(packet):
             sleep(delay)
             packet_count += increment
     except KeyboardInterrupt:
-        print(formater_text('Manual interruption', FontTypes.ERROR, [0, 1]))
+        f_print(formater_text('Manual interruption', FontTypes.ERROR))
