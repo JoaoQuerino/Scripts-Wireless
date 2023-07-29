@@ -1,7 +1,7 @@
 from abc import ABC
 from scapy.all import IP, TCP, UDP, ICMP, RandMAC, Ether, RandIP, get_if_hwaddr, Packet, get_if_list
-import ipaddress
-from Views.Printer import FontTypes, formater_text, f_print, f_input
+from printer import FontTypes, formater_text, f_print, f_input
+from user_input import host_ip_input, host_port_input, payload_input
 
 
 class AbstractPacket(ABC):
@@ -53,26 +53,16 @@ class AbstractPacket(ABC):
 
         return packet
 
-    def host_ip_input(self) -> str: #TODO: Listar ip dos aparelhos na rede para selecionar - Usar PortScanner
+    def host_ip_input(self) -> str: 
         """
         Prompts the user to enter the IP address of the destination host.
 
         :return: The entered host IP address.
         """
 
-        valid = False
-        while valid == False:
-            try:
-                host_ip = f_input(formater_text('Enter the IP address of the destination host: ', FontTypes.NORMAL))
-                if ipaddress.IPv4Address(host_ip):
-                    valid = True
-            except ipaddress.AddressValueError:
-                f_print(formater_text('Invalid ipv4 address value', FontTypes.ERROR))
-            except Exception as e:
-                f_print(formater_text(str(e), FontTypes.ERROR))
-        return host_ip
+        return host_ip_input()
     
-    def host_port_input(self, host_ip) -> str: #TODO: Listar portas abertas para selecionar - Usar PortScanner
+    def host_port_input(self, host_ip) -> str: 
         """
         Prompts the user to enter the destination port.
 
@@ -80,17 +70,7 @@ class AbstractPacket(ABC):
         :return: The entered destination port.
         """
 
-        valid = False
-        while valid == False:
-            try:
-                host_port = int(f_input(formater_text('Enter the destination port: ', FontTypes.NORMAL)))
-                valid = True
-            except ValueError:
-                f_print(formater_text('The port has to be an integer', FontTypes.ERROR))
-            except Exception as e:
-                f_print(formater_text(str(e), FontTypes.ERROR))
-
-        return host_port
+        return host_port_input(host_ip)
 
     def payload_input(self) -> str:
         """
@@ -99,9 +79,7 @@ class AbstractPacket(ABC):
         :return: The entered payload.
         """
 
-        payload = f_input(formater_text('Enter a payload to be in the package: ', FontTypes.NORMAL))
-
-        return payload
+        return payload_input()
 
     def get_layer(self, host_port):
         """
@@ -121,7 +99,7 @@ class TCPPacket(AbstractPacket):
     Inherits from AbstractPacket.
     """
     
-    def get_layer(self, host_port) -> TCP: #TODO: verificar possiveis excess�es
+    def get_layer(self, host_port) -> TCP:
         """
         Retrieves the TCP layer for the packet based on the host port.
 
@@ -139,7 +117,7 @@ class UDPPacket(AbstractPacket):
     Inherits from AbstractPacket.
     """
 
-    def get_layer(self, host_port) -> UDP: #TODO: verificar possiveis excess�es
+    def get_layer(self, host_port) -> UDP: 
         """
         Retrieves the UDP layer for the packet based on the host port.
 

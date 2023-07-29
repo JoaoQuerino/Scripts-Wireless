@@ -1,7 +1,7 @@
 from time import sleep
 from scapy.all import sendp
 from math import floor
-from Views.Printer import FontTypes, formater_text, f_print, f_input
+from printer import FontTypes, formater_text, f_print, f_input
 
 
 def pos_int_input(message) -> int:
