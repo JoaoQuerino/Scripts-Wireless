@@ -1,6 +1,7 @@
 import ipaddress
 from printer import FontTypes, formater_text, f_print, f_input
 from enum import Enum
+from common import input_ipv4_re
 
 
 class Protocol(Enum):
@@ -118,3 +119,45 @@ def payload_input() -> str:
 
     return payload
 
+def get_user_input():
+    print(
+        """
+        Time to select one or more host(s)
+        Provide the subnet using CIDR notation at the end of the IPv4 address if you want to analyze the entire network
+
+        Class legend
+        Class A subnet 255.0.0.0 = /8
+        Class B subnet 255.255.0.0 = /16
+        Class C subnet 255.255.255.0 = /24
+        """
+    )
+
+    selected_ports = '20-23,42,43,69,80,109,110,115,118,143,144,156,'\
+    '161,162,179,220,386,389,443,465,513,514,530,547,587,636,873,989,'\
+    '990,993,995,1080,1194,1433,1521,2049,2081,2083,2086,2181,3306,3389,5353,5432,8080'
+    
+    while True:
+        target_ip_address = input_ipv4_re()
+        print('\nDo you want to choose the port(s) to be analyzed? If not,'\
+             'the analysis will select the most frequent service ports')
+        insert_ports = input('Y to yes\n')
+        if insert_ports.lower() == 'y':
+            if insert_ports.lower() == 'y':
+                print(
+                    """
+                    ### Follow one of the examples ###
+
+                    Single port
+                        8080
+
+                    Two or more specific ports
+                        443,8080
+
+                    Port range from 0 to 5000
+                        0-5000
+                    """
+                )
+                selected_ports = host_port_input(target_ip_address)
+                return target_ip_address, selected_ports
+        else:
+            return target_ip_address, selected_ports
