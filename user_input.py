@@ -87,7 +87,7 @@ def host_ip_input() -> str:
                 f_print(formater_text(str(e), FontTypes.ERROR))
         return host_ip
 
-def host_port_input(host_ip) -> str: 
+def host_port_input(host_ip) -> int: 
         """
         Prompts the user to enter the destination port.
 
@@ -157,7 +157,7 @@ def get_user_input():
                         0-5000
                     """
                 )
-                selected_ports = host_port_input(target_ip_address)
+                selected_ports = str(host_port_input(target_ip_address))
                 return target_ip_address, selected_ports
         else:
             return target_ip_address, selected_ports
