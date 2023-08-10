@@ -67,7 +67,7 @@ def choose_protocol() -> Protocol:
 
     return Protocol(supported_protocols.index(protocol))
 
-def host_ip_input() -> str: 
+def host_ip_input(accept_empty = False) -> str: 
         """
         Prompts the user to enter the IP address of the destination host.
 
@@ -80,6 +80,8 @@ def host_ip_input() -> str:
             try:
                 host_ip = f_input(formater_text('Enter the IP address of the destination host: ', FontTypes.NORMAL))
                 if ipaddress.IPv4Address(host_ip):
+                    valid = True
+                elif accept_empty == True:
                     valid = True
             except ipaddress.AddressValueError:
                 f_print(formater_text('Invalid ipv4 address value', FontTypes.ERROR))

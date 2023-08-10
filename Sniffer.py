@@ -2,16 +2,13 @@ import time
 import os
 from scapy.all import IP, TCP, UDP, ICMP, sniff, wrpcap
 from printer import FontTypes, formater_text, f_input, f_print
+from user_input import host_ip_input
 
 
 # TODO: usar mudolos criados e revisar formatação de texto
 def packet_handler(packet):
     """
     Process and display summary and details of a captured packet.
-
-    This function takes a captured packet as input and displays a formatted summary and
-    detailed information about the packet. The summary includes basic packet information,
-    and the details include the full packet structure.
 
     Args:
         packet: The captured packet to be processed and displayed.
@@ -36,10 +33,6 @@ def packet_handler_save(packet):
     """
     Process and save a captured packet.
 
-    This function processes a captured packet by first passing it to the existing packet_handler
-    function for initial processing. After that, the packet is saved to a pcap file. The filename
-    for the pcap file is determined globally by the variable 'pcap_file_name'.
-
     Args:
         packet: The captured packet to be processed and saved.
 
@@ -57,11 +50,6 @@ def packet_handler_save(packet):
 def choose_saving_options() -> str:
     """
     Choose whether to save the captured packets to a pcap file.
-
-    This function prompts the user to choose whether they want to save the captured packets
-    to a pcap file. If the user chooses to save, they are prompted to enter the name of the
-    pcap file. The entered filename is returned as a string. If the user chooses not to save,
-    None is returned.
 
     Returns:
         str or None: The filename for the pcap file if saving is requested, or None if not saving.
@@ -83,11 +71,6 @@ def choose_saving_options() -> str:
 def choose_protocol() -> str:
     """
     Choose a protocol to filter packets by.
-
-    This function prompts the user to choose whether they want to filter packets by a
-    specific protocol. If the user chooses to filter by protocol, they are prompted to
-    select a protocol type (ICMP, TCP, or UDP). The chosen protocol is returned as a string.
-    If the user chooses not to filter by protocol, an empty string is returned.
 
     Returns:
         str: The chosen protocol to filter packets by, or an empty string if no filtering.
@@ -122,10 +105,6 @@ def get_packet_count() -> str:
     """
     Get the number of packets to be captured and analyzed.
 
-    This function prompts the user to enter the number of packets they want to capture
-    and analyze. It ensures that a valid positive integer value is provided before
-    returning the count.
-
     Returns:
         int: The number of packets to capture and analyze.
 
@@ -148,9 +127,6 @@ if __name__ == '__main__':
     """
     This script captures and analyzes network packets using a packet sniffer.
     
-    It captures packets from a specified network interface, analyzes packets based
-    on selected protocols and filters, and optionally saves them to a pcap file.
-    
     Usage:
         Run this script to capture and analyze network packets using the specified
         configuration options.
@@ -160,15 +136,12 @@ if __name__ == '__main__':
         - monitored_device: The IPV4 address to analyze or None to analyze the entire network.
         - pcap_file_name: The name of the pcap file to save packets or None to not save.
         - protocol: The protocol to filter packets by (e.g., 'tcp', 'udp', 'icmp').
-        - counter: The number of packets to capture and analyze.
-    
-    Notes:
-        This script uses the Scapy library to capture and analyze network packets.
-        It allows the user to specify filters, protocols, and saving options.
+        - counter: The number of packets to capture and analyze.    
     """
 
     interface = 'Wi-Fi'
-    monitored_device = input('Enter a local IPV4 address to be analyzed, or leave it blank to analyze the entire network: ')
+    print('Enter a local IPV4 address to be analyzed, or leave it blank to analyze the entire local network')
+    monitored_device = host_ip_input(accept_empty = True)
 
     pcap_file_name = choose_saving_options()
     protocol = choose_protocol()
