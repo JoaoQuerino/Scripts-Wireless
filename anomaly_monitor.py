@@ -1,22 +1,24 @@
-from scapy.all import *
-from scapy.all import IP
+from scapy.all import IP, sniff
 import datetime
 import os
 import matplotlib.pyplot as plt
 from termcolor import colored
 from tabulate import tabulate
+from user_input import host_ip_input
+from printer import FontTypes, formater_text, f_input, f_print
 
-# Salvo 28-05
 
+# TODO: Padronizar lingua, usar modulos próprios, aplicar boas praticas como saida esperada, identação e nomes de funções/variaveis
+monitorado_ip = host_ip_input()
 while(True):
     try:
-        monitorado_ip = input("Informe o endereço IP do aparelho a ser monitorado: ")
+        
         maxPkt = int(input("Informe o número máximo de pacotes para aviso: "))
         intConf = int(input("Informe o tempo de intervalo entre cada análise em segundos: "))
         duracao = int(input("Informe a duração da execução em segundos: "))
         break
     except:
-        print(colored("Erro de processamento das entradas", "red"))
+        f_print(formater_text('Input processing error', FontTypes.ALERT))
 
 periodo = datetime.timedelta(seconds=duracao)
 
@@ -104,7 +106,8 @@ while datetime.datetime.now() < fim:
         quantidade.append(cntRec)
         cntRec = 0
         turno.append(cntTurno)
-
+    except KeyboardInterrupt:
+        print("Erro de processamento ou parada forçada")
     except:
         print("Erro de processamento ou parada forçada")
 

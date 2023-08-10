@@ -76,17 +76,21 @@ def host_ip_input(accept_empty = False) -> str:
         # TODO: Dar a opçao de listar ip dos aparelhos na rede para selecionar - Usar PortScanner
 
         valid = False
+        print(0)
         while valid == False:
             try:
                 host_ip = f_input(formater_text('Enter the IP address of the destination host: ', FontTypes.NORMAL))
                 if ipaddress.IPv4Address(host_ip):
-                    valid = True
-                elif accept_empty == True:
+                    print(1)
                     valid = True
             except ipaddress.AddressValueError:
-                f_print(formater_text('Invalid ipv4 address value', FontTypes.ERROR))
+                if accept_empty == True and host_ip == "":
+                    valid = True
+                else:
+                    f_print(formater_text('Invalid ipv4 address value', FontTypes.ERROR))
             except Exception as e:
                 f_print(formater_text(str(e), FontTypes.ERROR))
+
         return host_ip
 
 def host_port_input(host_ip) -> int: 
