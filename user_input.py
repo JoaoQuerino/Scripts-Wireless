@@ -1,8 +1,17 @@
 import ipaddress
+import os
 from printer import FontTypes, formater_text, f_print, f_input
 from enum import Enum
 from common import input_ipv4_re
 
+def get_user_input_generic(prompt, error_message, data_type=int):
+    while True:
+        try:
+            user_input = data_type(input(prompt))
+            break
+        except ValueError:
+            f_print(formater_text(error_message, FontTypes.ALERT))
+    return user_input
 
 class Protocol(Enum):
     """
@@ -167,3 +176,18 @@ def get_user_input():
                 return target_ip_address, selected_ports
         else:
             return target_ip_address, selected_ports
+
+def get_save_option():
+    global file_path 
+    global file_name
+
+    save = input('Do you want the capture to be saved? (Y/N): ').lower()
+    if save == "y":
+        file_name = input('Enter the name of the log file to be saved: ')
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        save_information = os.path.join(file_path, file_name)
+        return save_information
+    else:
+        file_path = None
+        file_name = None
+        return 
