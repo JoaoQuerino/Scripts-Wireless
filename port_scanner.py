@@ -1,5 +1,3 @@
-import re
-import socket
 import time
 import nmap
 from printer import FontTypes, formater_text, f_input, f_print

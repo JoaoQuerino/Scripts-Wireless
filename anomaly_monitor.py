@@ -1,3 +1,4 @@
+from cProfile import label
 from scapy.all import IP, sniff
 import datetime
 import matplotlib.pyplot as plt
@@ -9,8 +10,9 @@ from printer import FontTypes, formater_text, f_print
 file_path = None
 file_name = None
 
-received_counter = 0
-read_counter = 0
+received_counter = 0 # CONTADOR DE PACOTES DA MESMA ORIGEM
+read_counter = 0 # cONTADOR DE LEITURAS ANALISADAS
+received_total = 0
 
 reading = []
 quantity_of_packages = []
@@ -18,9 +20,13 @@ send_counter_by_source = []
 source_list = []
 table_data = []
 new_table_data = []
+reading_media = []
 
+first_maximum = True
 
-# TODO: Padronizar lingua, usar modulos próprios, aplicar boas praticas como saida esperada, identação e nomes de funções/variaveis
+# TODO: usar modulos próprios, aplicar boas praticas como saida esperada, 
+# identação e nomes de funções/variaveis, ajustar impressao dos suspeitos
+
 monitored_ip = host_ip_input()
 
 maximum_to_alert = get_user_input_generic(
@@ -49,9 +55,6 @@ def packet_handler(packet):
     if packet.haslayer(IP) and packet[IP].dst == monitored_ip:
         received_counter += 1
 
-check_limit = False
-
-first_maximum = True
 print(tabulate(table_data, headers=["Leitura", " IP DST", "PACOTES RECEBIDOS", "IP SRC", "MAX PACOTES", "HORA DA LEITURA"], tablefmt="grid"))
 start_monitoring = datetime.datetime.now()
 stop_monitoring = start_monitoring + period
@@ -73,8 +76,7 @@ while datetime.datetime.now() < stop_monitoring:
             if count > maximum_to_alert:
                 source_list.append(hosts)
 
-        if received_counter > maximum_to_alert:
-            check_limit = True
+        if received_counter >= maximum_to_alert:
             string_without_brackets = ' '.join(str(element) for element in source_list)
             reading_moment = datetime.datetime.now()
             new_table_data = [read_counter, monitored_ip, received_counter, string_without_brackets, maximum_to_alert, reading_moment]
@@ -91,8 +93,10 @@ while datetime.datetime.now() < stop_monitoring:
             read_time = datetime.datetime.now()
             new_table_data = [read_counter, monitored_ip, received_counter, "No suspect", maximum_to_alert, read_time]
             print(tabulate([new_table_data], tablefmt="grid"))          
-
+        
+        received_total += received_counter 
         quantity_of_packages.append(received_counter)
+        reading_media.append(received_total / read_counter)
         received_counter = 0
         reading.append(read_counter)
     except KeyboardInterrupt:
@@ -101,7 +105,10 @@ while datetime.datetime.now() < stop_monitoring:
         print("Processing error: " + str(e))
 
 # TODO: Mudar grafico para tabela com valor da leitura e media
-plt.plot(reading, quantity_of_packages)
+
+plt.figure(figsize=(10, 6))
+plt.plot(reading, reading_media, label = 'Media of package', marker = 'o', color = 'grey')
+plt.bar(reading, quantity_of_packages, label = 'Number of package read')
 
 plt.title('Number of readings per shift')
 plt.xlabel('per second(s)')
