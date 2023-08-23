@@ -1,8 +1,8 @@
 import time
 import nmap
-from printer import FontTypes, formater_text, f_input, f_print
+from printer import FontTypes, formater_text, f_print
 from common import get_all_ips
-from user_input import host_ip_input, host_port_input, get_user_input
+from user_input import get_user_input
 from port_scanner_files.save_scan import save_to_file
 
 
@@ -11,6 +11,7 @@ f_print(formater_text('Welcome\n', FontTypes.BOLD))
 list_IP = get_all_ips()
 f_print('Your IPv4 are:' + formater_text(list_IP, FontTypes.BOLD))
 
+# TODO: Fazer docstring das funções do portscanner
 def start_scan(target_ip_address:str, selected_ports:str):
     f_print(formater_text('Scan started, please wait...', FontTypes.BOLD))
     scanner = nmap.PortScanner()

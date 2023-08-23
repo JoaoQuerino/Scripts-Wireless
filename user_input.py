@@ -5,6 +5,18 @@ from enum import Enum
 from common import input_ipv4_re
 
 def get_user_input_generic(prompt, error_message, data_type=int):
+    """
+    Get user input with error handling for the specified data type.
+
+    Args:
+        prompt (str): The prompt to display to the user.
+        error_message (str): The error message to display on invalid input.
+        data_type (type, optional): The data type to convert the user input.
+            Default is int.
+
+    Returns:
+        Any: User input of the specified data type.
+    """
     while True:
         try:
             user_input = data_type(input(prompt))
@@ -178,6 +190,16 @@ def get_user_input():
             return target_ip_address, selected_ports
 
 def get_save_option():
+    """
+    Get user input for saving capture information.
+
+    This function prompts the user to decide whether they want to save the capture data.
+    If 'Y' is entered, the user is prompted to provide a log file name.
+    The file path is set to the current directory.
+
+    Returns:
+    str or None: File path if saving is chosen, None if not.
+    """
     global file_path 
     global file_name
 

@@ -1,7 +1,6 @@
 import datetime
 from tabulate import tabulate
 from scapy.all import IP, sniff
-import matplotlib.pyplot as plt
 from user_input import host_ip_input, get_user_input_generic, get_save_option
 from printer import FontTypes, formater_text, f_print
 from anomaly_monitor_files import plot_reading_data
@@ -51,11 +50,12 @@ def packet_handler(packet):
     if packet.haslayer(IP) and packet[IP].dst == monitored_ip:
         received_counter += 1
 
-print(tabulate(table_data, headers=["Leitura", " IP DST", 
-                                    "PACOTES RECEBIDOS", "IP SRC", 
-                                    "MAX PACOTES", "HORA DA LEITURA"], tablefmt="grid"))
+print(tabulate(table_data, headers=["READING", " IP DST", 
+                                    "RECEIVED PACKET", "IP SRC", 
+                                    "MAX PACKET", "READING TIME"], tablefmt="grid"))
 start_monitoring = datetime.datetime.now()
 stop_monitoring = start_monitoring + period
+
 if __name__ == "__main__":
     while datetime.datetime.now() < stop_monitoring:  
         try:      

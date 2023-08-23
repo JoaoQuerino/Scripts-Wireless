@@ -5,6 +5,21 @@ from printer import f_print, formater_text, FontTypes
 
 
 def get_all_ips():
+    """
+    Returns a list containing all available IPv4 addresses on the network interfaces of the system.
+
+    This function utilizes the `psutil` library to retrieve information about network interfaces and their
+    associated IP addresses. It iterates through all address information associated with the interfaces and
+    filters those with an address family of AF_INET (IPv4). IPv4 addresses are extracted and added to a list,
+    which is then returned as the result.
+
+    Returns:
+        list: A list containing the IPv4 addresses of the network interfaces.
+
+    Example:
+        >>> get_all_ips()
+        ['192.168.1.2', '10.0.0.1']
+    """
     ip_list = []
     for i in psutil.net_if_addrs().values():
         for j in i:

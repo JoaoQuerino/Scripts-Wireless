@@ -18,6 +18,18 @@ class FontTypes(Enum):
 
 
 def formater_text(str: str, font_type: FontTypes, word_indexes_to_format: list[int]=-1) -> str:
+    """
+    Formats specific words or the entire text with a given font type.
+
+    Args:
+        text (str): The input text to be formatted.
+        font_type (FontTypes): The font type to apply to the specified words or entire text.
+        word_indexes_to_format (list[int], optional): List of word indexes to format.
+            Default is -1, which means formatting the entire text.
+
+    Returns:
+        str: Formatted text.
+    """
 
     if isinstance(font_type.value, list):
         font_type = ' '.join(font_type.value)
