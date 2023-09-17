@@ -1,9 +1,9 @@
 import datetime
 from tabulate import tabulate
 from scapy.all import IP, sniff
-from user_input import host_ip_input, get_user_input_generic, get_save_option
+from user_input import host_ip_input, get_user_input_generic, get_save_option, get_interface
 from printer import FontTypes, formater_text, f_print
-from anomaly_monitor_files import plot_reading_data
+from anomaly_monitor_files.anomaly_monitor_utils import plot_reading_data
 
 
 file_path = None
@@ -36,6 +36,7 @@ duration = get_user_input_generic(
     "Enter duration of execution in seconds: ",
     'Input duration processing error'
 )
+interface = get_interface()
 period = datetime.timedelta(seconds=duration)
 
 # TODO: revisar funçao de salvamento, para ficar 
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     while datetime.datetime.now() < stop_monitoring:  
         try:      
             read_counter += 1
-            sniff(prn=packet_handler, filter="ip", iface="Wi-Fi", 
+            sniff(prn=packet_handler, filter="ip", iface=interface, 
                   timeout=interval_in_seconds)
             hosts = {}
             for pkt in send_counter_by_source:
@@ -80,6 +81,7 @@ if __name__ == "__main__":
                 string_without_brackets = ' '.join(str(element) 
                                                    for element in source_list)
                 reading_moment = datetime.datetime.now()
+                reading_moment = reading_moment.strftime("%Y-%m-%d %H:%M:%S")
                 new_table_data = [read_counter, monitored_ip, received_counter, 
                                   string_without_brackets, maximum_to_alert, 
                                   reading_moment]
@@ -98,6 +100,7 @@ if __name__ == "__main__":
             else:
                 source_list.clear()
                 read_time = datetime.datetime.now()
+                read_time = read_time.strftime("%Y-%m-%d %H:%M:%S")
                 new_table_data = [read_counter, monitored_ip, received_counter, 
                                   "No suspect", maximum_to_alert, read_time]
                 print(tabulate([new_table_data], tablefmt="grid"))          

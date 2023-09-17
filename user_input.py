@@ -2,7 +2,7 @@ import ipaddress
 import os
 from printer import FontTypes, formater_text, f_print, f_input
 from enum import Enum
-from common import input_ipv4_re
+from common import input_ipv4_re, check_interface
 
 def get_user_input_generic(prompt, error_message, data_type=int):
     """
@@ -97,7 +97,6 @@ def host_ip_input(accept_empty = False) -> str:
         # TODO: Dar a opçao de listar ip dos aparelhos na rede para selecionar - Usar PortScanner
 
         valid = False
-        print(0)
         while valid == False:
             try:
                 host_ip = f_input(formater_text('Enter the IP address of the destination host: ', FontTypes.NORMAL))
@@ -213,3 +212,17 @@ def get_save_option():
         file_path = None
         file_name = None
         return 
+
+
+def get_interface() -> str:
+    while True:
+        interface = input('Enter a interface to be used: ')
+        if interface == '':
+            f_print(formater_text('Invalid input\n', FontTypes.ERROR))
+            continue
+        if check_interface(interface) == True:
+            break
+        else:
+            f_print(formater_text('Interface not found\n', FontTypes.ERROR))
+         
+    return interface

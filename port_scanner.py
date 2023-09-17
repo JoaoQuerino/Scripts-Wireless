@@ -11,7 +11,6 @@ f_print(formater_text('Welcome\n', FontTypes.BOLD))
 list_IP = get_all_ips()
 f_print('Your IPv4 are:' + formater_text(list_IP, FontTypes.BOLD))
 
-# TODO: Fazer docstring das funções do portscanner
 def start_scan(target_ip_address:str, selected_ports:str):
     f_print(formater_text('Scan started, please wait...', FontTypes.BOLD))
     scanner = nmap.PortScanner()
@@ -48,10 +47,10 @@ def display_tcp_info(tcp_info):
     if tcp_info:
         print('Result of search using TCP send')
         for port, port_info in tcp_info.items():
-            f_print(formater_text(f'Port found: {port} / Reason - {port_info.get("reason", "unknown")}', FontTypes.BOLD))
+            f_print(formater_text(f'Port found: {port} / Reason - {port_info.get("reason", "unknown")}', FontTypes.BOLD, [2, 3, 4, 5, 6]))
             service = port_info.get('name')
             if service:
-                f_print(formater_text(f'   Service: running in port {port}: {service}', FontTypes.BOLD))
+                f_print('   Service: running in port' + formater_text(f' {port}: {service}', FontTypes.BOLD))
             else:
                 f_print('   Service: ' + formater_text('unknown', FontTypes.ALERT))
     else:
@@ -59,7 +58,7 @@ def display_tcp_info(tcp_info):
 
 def display_mac_info(device_info):
     mac = device_info.get('addresses', {}).get('mac', formater_text('unknow', FontTypes.ALERT))
-    f_print(formater_text(f'MAC: {mac}', FontTypes.BOLD))
+    f_print(formater_text(f'MAC: {mac}', FontTypes.NORMAL))
 
 def display_vendor_info(vendor):
    if not vendor:
@@ -70,13 +69,13 @@ def display_vendor_info(vendor):
 
 def display_reaction_info(device_info):
     reacao = device_info.get('status', {}).get('reason', formater_text('unknow', FontTypes.ALERT))
-    f_print(formater_text(f'Answer type: {reacao}', FontTypes.BOLD))
+    f_print("Answer type: " + formater_text(f'{reacao}', FontTypes.NORMAL))
 
 def display_os_info(sistema_operacional):
     if sistema_operacional:
-        f_print(formater_text(f"Operational system: {sistema_operacional[0]['name']}", FontTypes.BOLD))
+        f_print("Operational system: " + formater_text(f"{sistema_operacional[0]['name']}", FontTypes.BOLD))
     else:
-        f_print(formater_text('Operational system: ', FontTypes.BOLD) + formater_text('unknow', FontTypes.BOLD))
+        f_print(formater_text('Operational system: ', FontTypes.NORMAL) + formater_text('unknow', FontTypes.ALERT))
 
 if __name__ == '__main__':
     while True:
@@ -88,8 +87,8 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             f_print(formater_text('\nManual finalization performed', 
                             FontTypes.ERROR))
-        except BaseException as e:
-            print(e)
+        # except BaseException as e:
+        #     print(e)
 
         elapsed_time = time.time() - start_time
         if elapsed_time < 2:

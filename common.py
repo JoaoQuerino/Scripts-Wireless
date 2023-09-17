@@ -4,6 +4,14 @@ import re
 from printer import f_print, formater_text, FontTypes
 
 
+def check_interface(interface_to_check) -> bool:
+    interface_availabre = psutil.net_if_addrs().keys()
+    
+    if interface_to_check in interface_availabre:
+        return True
+    else:
+        return False
+
 def get_all_ips():
     """
     Returns a list containing all available IPv4 addresses on the network interfaces of the system.
