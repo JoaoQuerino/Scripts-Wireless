@@ -20,7 +20,7 @@ class AbstractPacket(ABC):
 
         host_ip = self.host_ip_input()
         host_port = self.host_port_input(host_ip)
-        chosen_layer = self.get_layer(host_port)
+        chosen_layer = self.get_layer()
         payload = self.payload_input()
                              
         use_rand_mac_and_ip = f_input(f'{formater_text("Want to use random MAC and IP address?", FontTypes.NORMAL)} '\
@@ -99,7 +99,7 @@ class TCPPacket(AbstractPacket):
     Inherits from AbstractPacket.
     """
     
-    def get_layer(self, host_port) -> TCP:
+    def get_layer(self) -> TCP:
         """
         Retrieves the TCP layer for the packet based on the host port.
 
@@ -107,7 +107,7 @@ class TCPPacket(AbstractPacket):
         :return: The TCP layer object for the packet.
         """
 
-        return TCP(dport=host_port)
+        return TCP()
 
 
 class UDPPacket(AbstractPacket):

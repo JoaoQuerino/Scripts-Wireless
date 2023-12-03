@@ -104,10 +104,10 @@ def choose_protocol() -> str:
         It ensures that the user's input is valid and corresponds to the available options.
     """
 
-    protocol = input('Would you like to filter a protocol? (Y/N) ')
-    if protocol.lower() == "s":
+    protocol = input('Would you like to filter a protocol? Y to filter ')
+    if protocol.lower() == "y":
         while True:
-            protocol_type = input("Which protocol would you like to filter? 1 = ICMP || 2 = TCP || 3 = UDP ")
+            protocol_type = input("Which protocol would you like to filter? 1 = ICMP || 2 = TCP || 3 = UDP : ")
             if protocol_type in ['1', '2', '3']:
                 if protocol_type == '1':
                     return 'icmp'
@@ -117,7 +117,5 @@ def choose_protocol() -> str:
                     return 'udp'
             else:
                 f_print(formater_text('Invalid protocol. Please enter 1, 2 or 3.', FontTypes.ALERT))
-    elif protocol.lower() == 'n':
-        return ''
     else:
-        raise ValueError('Input is not Y or N')
+        return ''

@@ -65,7 +65,7 @@ def display_vendor_info(vendor):
        f_print(formater_text('Fabricator: ', FontTypes.NORMAL) + formater_text('unknow', FontTypes.ALERT))
 
    for fabricator in vendor:
-        f_print(formater_text(f'Fabricator: {vendor[fabricator]}', FontTypes.BOLD))
+        f_print("Fabricator: " + formater_text(f'{vendor[fabricator]}', FontTypes.BOLD))
 
 def display_reaction_info(device_info):
     reacao = device_info.get('status', {}).get('reason', formater_text('unknow', FontTypes.ALERT))

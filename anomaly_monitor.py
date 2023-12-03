@@ -89,13 +89,11 @@ if __name__ == "__main__":
                                    if item == received_counter else item 
                                    for item in new_table_data]], tablefmt="grid"))
                 source_list.clear()
-                if file_path and file_name:
+                if infSalv:
                     with open(infSalv, "a") as file:
                         if first_maximum == True:
-                            file.write("Destiny;Source;Number of packages;'\
-                            Seconds;Maximum amount;Reading moment\n")
-                        file.write(f"{monitored_ip};{string_without_brackets};'\
-                            '{received_counter};{interval_in_seconds};{maximum_to_alert};{reading_moment}\n")
+                            file.write("Destiny;Source;Number of packages;Seconds;Maximum amount;Reading moment\n")
+                        file.write(f"{monitored_ip};{string_without_brackets};{received_counter};{interval_in_seconds};{maximum_to_alert};{reading_moment}\n")
                         first_maximum = False
             else:
                 source_list.clear()

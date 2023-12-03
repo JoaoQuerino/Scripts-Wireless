@@ -101,7 +101,6 @@ def host_ip_input(accept_empty = False) -> str:
             try:
                 host_ip = f_input(formater_text('Enter the IP address of the destination host: ', FontTypes.NORMAL))
                 if ipaddress.IPv4Address(host_ip):
-                    print(1)
                     valid = True
             except ipaddress.AddressValueError:
                 if accept_empty == True and host_ip == "":
@@ -113,7 +112,7 @@ def host_ip_input(accept_empty = False) -> str:
 
         return host_ip
 
-def host_port_input(host_ip) -> int: 
+def host_port_input(host_ip) -> str: 
         """
         Prompts the user to enter the destination port.
 
@@ -125,10 +124,8 @@ def host_port_input(host_ip) -> int:
         valid = False
         while valid == False:
             try:
-                host_port = int(f_input(formater_text('Enter the destination port: ', FontTypes.NORMAL)))
+                host_port = str(f_input(formater_text('Enter the destination port: ', FontTypes.NORMAL)))
                 valid = True
-            except ValueError:
-                f_print(formater_text('The port has to be an integer', FontTypes.ERROR))
             except Exception as e:
                 f_print(formater_text(str(e), FontTypes.ERROR))
 
@@ -166,7 +163,7 @@ def get_user_input():
         target_ip_address = input_ipv4_re()
         print('\nDo you want to choose the port(s) to be analyzed? If not,'\
              'the analysis will select the most frequent service ports')
-        insert_ports = input('Y to yes\n')
+        insert_ports = input('Y to yes: ')
         if insert_ports.lower() == 'y':
             if insert_ports.lower() == 'y':
                 print(

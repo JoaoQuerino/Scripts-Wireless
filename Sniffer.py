@@ -20,7 +20,7 @@ if __name__ == '__main__':
         - counter: The number of packets to capture and analyze.    
     """
 
-    interface = 'Wi-Fi'
+    interface = 'enp0s3'
     print('Enter a local IPV4 address to be analyzed, or leave it blank to analyze the entire local network')
     monitored_device = host_ip_input(accept_empty = True)
 
