@@ -1,7 +1,34 @@
 import time
-from scapy.all import sniff
+from scapy.all import get_if_list, sniff
 from user_input import host_ip_input
 from sniffer_files.packet_utils import *
+
+
+def choose_capture_interface() -> str:
+    """List interfaces recognized by Scapy and return the user's selection."""
+    interfaces = get_if_list()
+    if not interfaces:
+        raise SystemExit('Nenhuma interface de rede foi encontrada para captura.')
+
+    print('Interfaces de rede disponíveis:')
+    for number, interface in enumerate(interfaces, start=1):
+        print(f'{number}. {interface}')
+
+    while True:
+        choice = input('Digite o número da interface que deseja usar: ').strip()
+        try:
+            index = int(choice) - 1
+        except ValueError:
+            print('Opção inválida. Digite o número de uma interface da lista.')
+            continue
+
+        if 0 <= index < len(interfaces):
+            interface = interfaces[index]
+            print(f'Interface selecionada: {interface}')
+            return interface
+
+        print(f'Opção inválida. Escolha um número entre 1 e {len(interfaces)}.')
+
 
 # TODO: usar mudolos criados e revisar formatação de texto
 if __name__ == '__main__':
@@ -20,7 +47,7 @@ if __name__ == '__main__':
         - counter: The number of packets to capture and analyze.    
     """
 
-    interface = 'enp0s3'
+    interface = choose_capture_interface()
     print('Enter a local IPV4 address to be analyzed, or leave it blank to analyze the entire local network')
     monitored_device = host_ip_input(accept_empty = True)
 
