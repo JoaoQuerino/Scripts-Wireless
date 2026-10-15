@@ -1,116 +1,116 @@
 import datetime
-import time
-
-from scapy.all import IP, sniff
-from scapy.error import Scapy_Exception
 from tabulate import tabulate
-
-from anomaly_monitor_files.anomaly_monitor_utils import plot_reading_data, save_alert
-from printer import FontTypes, formater_text, f_print
+from scapy.all import IP, sniff
 from user_input import host_ip_input, get_user_input_generic, get_save_option, get_interface
+from printer import FontTypes, formater_text, f_print
+from anomaly_monitor_files.anomaly_monitor_utils import plot_reading_data
 
 
-def get_positive_integer(prompt):
-    """Ask for a positive integer that can also be used as a timeout."""
-    while True:
-        value = get_user_input_generic(prompt, 'Enter a valid integer.')
-        try:
-            if value > 0 and float(value) < float('inf'):
-                return value
-        except OverflowError:
-            pass
-        f_print(formater_text('Enter a positive integer within the supported range.', FontTypes.ALERT))
+file_path = None
+file_name = None
+received_counter = 0 # CONTADOR DE PACOTES DA MESMA ORIGEM
+read_counter = 0 # CONTADOR DE LEITURAS ANALISADAS
+received_total = 0
+reading = []
+quantity_of_packages = []
+send_counter_by_source = []
+source_list = []
+table_data = []
+new_table_data = []
+reading_media = []
+first_maximum = True
+# TODO: usar modulos próprios, aplicar boas praticas como saida esperada, 
+# identação e nomes de funções/variaveis, ajustar impressao dos suspeitos
 
+monitored_ip = host_ip_input()
 
-def capture_packet_counts(monitored_ip, interface, timeout):
-    """Count incoming IPv4 packets by source for one analysis interval."""
-    packets_by_source = {}
+maximum_to_alert = get_user_input_generic(
+    "Enter the maximum number of packages for notice: ",
+    'Input maximum number processing error'
+)
+interval_in_seconds = get_user_input_generic(
+    "Enter the interval time between each analysis in seconds: ",
+    'Input interval processing error'
+)
+duration = get_user_input_generic(
+    "Enter duration of execution in seconds: ",
+    'Input duration processing error'
+)
+interface = get_interface()
+period = datetime.timedelta(seconds=duration)
 
-    def packet_handler(packet):
-        if packet.haslayer(IP) and packet[IP].dst == monitored_ip:
-            source_ip = packet[IP].src
-            packets_by_source[source_ip] = packets_by_source.get(source_ip, 0) + 1
+# TODO: revisar funçao de salvamento, para ficar 
+# passando none para o caso o usuário nao queira salvar
+infSalv = get_save_option()
 
-    sniff(
-        prn=packet_handler,
-        filter=f'ip dst host {monitored_ip}',
-        iface=interface,
-        timeout=timeout,
-        store=False,
-        chainCC=True,
-    )
-    return packets_by_source
+def packet_handler(packet):
+    global received_counter
+    if packet.haslayer(IP) and packet[IP].src != monitored_ip:
+        global send_counter_by_source
+        send_counter_by_source.append(packet)
+    if packet.haslayer(IP) and packet[IP].dst == monitored_ip:
+        received_counter += 1
 
+print(tabulate(table_data, headers=["READING", " IP DST", 
+                                    "RECEIVED PACKET", "IP SRC", 
+                                    "MAX PACKET", "READING TIME"], tablefmt="grid"))
+start_monitoring = datetime.datetime.now()
+stop_monitoring = start_monitoring + period
 
-def monitor_traffic(monitored_ip, maximum_to_alert, interval_seconds, duration, interface, save_path=None):
-    """Display each reading and optionally save alerts until time runs out."""
-    readings = []
-    packet_counts = []
-    average_counts = []
-    received_total = 0
-    stop_time = time.monotonic() + duration
-    headers = ['READING', 'IP DST', 'RECEIVED PACKETS', 'SUSPECTS (IP: PACKETS)', 'ALERT LIMIT', 'READING TIME']
+if __name__ == "__main__":
+    while datetime.datetime.now() < stop_monitoring:  
+        try:      
+            read_counter += 1
+            sniff(prn=packet_handler, filter="ip", iface=interface, 
+                  timeout=interval_in_seconds)
+            hosts = {}
+            for pkt in send_counter_by_source:
+                if pkt.haslayer(IP):
+                    ip_src = pkt[IP].src
+                    if ip_src in hosts:
+                        hosts[ip_src] += 1
+                    else:
+                        hosts[ip_src] = 1
 
-    while True:
-        remaining_seconds = stop_time - time.monotonic()
-        if remaining_seconds <= 0:
-            break
-
-        capture_seconds = min(interval_seconds, remaining_seconds)
-        try:
-            packets_by_source = capture_packet_counts(monitored_ip, interface, capture_seconds)
+            for hosts, count in hosts.items():
+                if count > maximum_to_alert:
+                    source_list.append(hosts)
+        
+            hosts = {}
+            if received_counter >= maximum_to_alert:
+                string_without_brackets = ' '.join(str(element) 
+                                                   for element in source_list)
+                reading_moment = datetime.datetime.now()
+                reading_moment = reading_moment.strftime("%Y-%m-%d %H:%M:%S")
+                new_table_data = [read_counter, monitored_ip, received_counter, 
+                                  string_without_brackets, maximum_to_alert, 
+                                  reading_moment]
+                f_print(tabulate([[formater_text(item, FontTypes.ERROR) 
+                                   if item == received_counter else item 
+                                   for item in new_table_data]], tablefmt="grid"))
+                source_list.clear()
+                if infSalv:
+                    with open(infSalv, "a") as file:
+                        if first_maximum == True:
+                            file.write("Destiny;Source;Number of packages;Seconds;Maximum amount;Reading moment\n")
+                        file.write(f"{monitored_ip};{string_without_brackets};{received_counter};{interval_in_seconds};{maximum_to_alert};{reading_moment}\n")
+                        first_maximum = False
+            else:
+                source_list.clear()
+                read_time = datetime.datetime.now()
+                read_time = read_time.strftime("%Y-%m-%d %H:%M:%S")
+                new_table_data = [read_counter, monitored_ip, received_counter, 
+                                  "No suspect", maximum_to_alert, read_time]
+                print(tabulate([new_table_data], tablefmt="grid"))          
+        
+            received_total += received_counter 
+            quantity_of_packages.append(received_counter)
+            reading_media.append(received_total / read_counter)
+            received_counter = 0
+            reading.append(read_counter)
         except KeyboardInterrupt:
-            f_print('Monitoring stopped by the user.')
-            break
-        except (OSError, Scapy_Exception, ValueError, OverflowError) as error:
-            f_print(formater_text(f'Capture failed: {error}', FontTypes.ERROR))
-            break
+            print('forced stop')
+        except Exception as e:
+            print("Processing error: " + str(e))
 
-        received_count = sum(packets_by_source.values())
-        suspects = ', '.join(
-            f'{source_ip}: {count}'
-            for source_ip, count in sorted(packets_by_source.items())
-            if count >= maximum_to_alert
-        ) or 'No suspect'
-        reading_number = len(readings) + 1
-        reading_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        row = [reading_number, monitored_ip, received_count, suspects, maximum_to_alert, reading_time]
-        table = tabulate([row], headers=headers, tablefmt='grid')
-        is_alert = received_count >= maximum_to_alert
-        f_print(formater_text(table, FontTypes.ERROR) if is_alert else table)
-
-        received_total += received_count
-        readings.append(reading_number)
-        packet_counts.append(received_count)
-        average_counts.append(received_total / reading_number)
-
-        if is_alert and save_path is not None:
-            try:
-                save_alert(save_path, [monitored_ip, suspects, received_count, capture_seconds, maximum_to_alert, reading_time])
-            except (OSError, ValueError, UnicodeError) as error:
-                f_print(formater_text(f'Could not save the alert: {error}. Saving disabled; monitoring continues.', FontTypes.ERROR))
-                save_path = None
-
-    if readings:
-        plot_reading_data(readings, average_counts, packet_counts)
-
-
-def main():
-    """Read monitoring options without running prompts when imported."""
-    try:
-        monitored_ip = host_ip_input()
-        maximum_to_alert = get_positive_integer('Enter the packet count that triggers an alert: ')
-        interval_seconds = get_positive_integer('Enter the interval between analyses in seconds: ')
-        duration = get_positive_integer('Enter the execution duration in seconds: ')
-        interface = get_interface()
-        save_path = get_save_option()
-        monitor_traffic(monitored_ip, maximum_to_alert, interval_seconds, duration, interface, save_path)
-    except (KeyboardInterrupt, EOFError):
-        f_print('Monitoring stopped by the user.')
-    except Exception as error:
-        # Stop once on an unexpected failure instead of repeating a broken loop.
-        f_print(formater_text(f'Monitoring stopped ({type(error).__name__}): {error}', FontTypes.ERROR))
-
-
-if __name__ == '__main__':
-    main()
+plot_reading_data(reading, reading_media, quantity_of_packages)

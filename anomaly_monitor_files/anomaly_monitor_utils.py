@@ -1,17 +1,4 @@
-import csv
-
 import matplotlib.pyplot as plt
-
-
-def save_alert(file_path, alert_data):
-    """Append an alert, writing the CSV header only when the file is empty."""
-    if file_path is None:
-        return
-    with open(file_path, 'a', encoding='utf-8', newline='') as log_file:
-        writer = csv.writer(log_file, delimiter=';')
-        if log_file.tell() == 0:
-            writer.writerow(['Destiny', 'Source', 'Number of packages', 'Seconds', 'Maximum amount', 'Reading moment'])
-        writer.writerow(alert_data)
 
 
 def plot_reading_data(reading, reading_media, quantity_of_packages):

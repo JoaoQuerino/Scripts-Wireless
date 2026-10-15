@@ -196,21 +196,19 @@ def get_save_option():
     Returns:
     str or None: File path if saving is chosen, None if not.
     """
-    while True:
-        save = input('Do you want the capture to be saved? (Y/N): ').strip().lower()
-        if save == 'n':
-            return None
-        if save == 'y':
-            break
-        f_print(formater_text('Enter Y or N.', FontTypes.ALERT))
+    global file_path 
+    global file_name
 
-    while True:
-        file_name = input('Enter the name of the log file to be saved: ').strip()
-        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
-        if not file_name or '\x00' in file_name or os.path.isdir(file_path):
-            f_print(formater_text('Enter a valid log file name, not a directory.', FontTypes.ALERT))
-            continue
-        return file_path
+    save = input('Do you want the capture to be saved? (Y/N): ').lower()
+    if save == "y":
+        file_name = input('Enter the name of the log file to be saved: ')
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        save_information = os.path.join(file_path, file_name)
+        return save_information
+    else:
+        file_path = None
+        file_name = None
+        return 
 
 
 def get_interface() -> str:
