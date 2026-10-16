@@ -145,11 +145,10 @@ class ICMPPacket(AbstractPacket):
 
         return ''
 
-    def get_layer(self, host_port) -> ICMP: #TODO: verificar possiveis excess�es
+    def get_layer(self) -> ICMP:
         """
-        Retrieves the ICMP layer for the packet.
+        Retrieves the ICMP layer for the packet. ICMP does not use ports.
 
-        :param host_port: The destination port.
         :return: The ICMP layer object for the packet.
         """
 
